@@ -1,7 +1,8 @@
 # ----------------------------------------------
 # ------------------- ALIASES ------------------
 # ----------------------------------------------
-alias ed='code ~/.zshrc'
+alias edzsh='code ~/.zshrc'
+alias ed='code ~/.terminal-config/.zsh-config.sh'
 alias ref='source ~/.zshrc'
 alias dev='cd ~/dev'
 alias dl='cd ~/Downloads'
