@@ -24,11 +24,22 @@ alias gra='git rebase --abort'
 alias grc='git rebase --continue'
 alias gc='git commit'
 alias gco='git checkout'
+alias gpl='git push local develop'
+alias deletelocalbranch='git branch -D'
+alias deleteremotebranch='git push local --delete'
+
 
 
 function commit {
   git add .
   git commit
+}
+
+function update-zsh {
+  cd ~/.terminal-config
+  git add .
+  git commit -m 'Updating zsh-config.sh'
+  git push origin master
 }
 
 function record {
