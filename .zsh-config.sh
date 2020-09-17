@@ -29,6 +29,9 @@ alias deletelocalbranch='git branch -D'
 alias deleteremotebranch='git push local --delete'
 
 
+function irb {
+  git rebase -i HEAD~$1
+}
 
 function commit {
   git add .
