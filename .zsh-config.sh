@@ -1,5 +1,15 @@
+# Welcome! Throw these next lines in your `~/.zshrc` to read in this file and configure plugins
+
+# # ---------------------------------------------------
+# # LOAD IN COMMANDS AND ALIASES
+# source ~/.terminal-config/.zsh-config.sh
+# # APPEND PC SPECIFIC PLUGINS TO MAIN LIST
+# for i in "${my_plugins[@]}"; do plugins+=($i); done
+# # ---------------------------------------------------
+
+
 # clears last login message
-clear
+clear 
 
 # ----------------------------------------------
 # -------------------- SET OS ------------------
@@ -35,6 +45,8 @@ then
   alias dev='cd ~/dev'
   alias dl='cd ~/Downloads'
   alias xdev='cd ~/dev/Xero'
+
+  # my_plugins=(django)
 
   function record {
     dl
