@@ -9,7 +9,7 @@
 
 
 # clears last login message
-clear 
+clear
 
 # ----------------------------------------------
 # -------------------- SET OS ------------------
@@ -19,7 +19,7 @@ case "${unameOut}" in
   Linux*)     os=Linux;;
   Darwin*)    os=Mac;;
   CYGWIN*)    os=Windows;;
-  MINGW*)     os=MinGw;;
+  MINGW*)     os=Windows;;
   *)          os="UNKNOWN:${unameOut}"
 esac
 
@@ -35,7 +35,8 @@ case "$machineName" in
 esac
 
 echo "Read in config for your $currentMachine"
-
+printf "\e[93m" && figlet -f standard "yo my dude"
+echo "\n"
 
 # ----------------------------------------------------------------------------------------------------
 # ------------------------------------------- DEVICE SPECIFIC ----------------------------------------
@@ -81,9 +82,11 @@ then
   alias l='colorls -A --sd'
 
   # fuzzy searching function
-  function f {
-    $1 | fzf
-  }
+  bindkey "ç" fzf-cd-widget
+
+  # function f {
+  #   $1 | fzf
+  # }
 
 # ---------------------------------------------
 # ------------------ WINDOWS ------------------
@@ -101,12 +104,18 @@ fi
 # ----------------------------------------------------------------------------------------------------
 # ------------------------------------------------ GLOBAL --------------------------------------------
 # ----------------------------------------------------------------------------------------------------
+
+# ----------------------------------------------
+# ----------------- ESSENTIALS -----------------
+# ----------------------------------------------
 alias ed='code ~/.terminal-config/.zsh-config.sh'
 alias .='cd ../'
 alias o='open .'
 alias c='clear'
 alias own='sudo chown -R $(whoami)'
-
+alias weather="curl wttr.in/Wellington"
+alias we="curl wttr.in/Wellington\?1nqF"
+alias gidday="printf \"\e[93m\" && figlet -f standard"
 
 # ----------------------------------------------
 # -------------------- GIT ---------------------
@@ -114,6 +123,7 @@ alias own='sudo chown -R $(whoami)'
 alias rems='git remote -v'
 alias gs='git status'
 alias gl='git log'
+alias gd='git diff'
 alias glo='git log --oneline'
 alias gra='git rebase --abort'
 alias grc='git rebase --continue'
@@ -123,6 +133,9 @@ alias gpl='git push local develop'
 alias deletelocalbranch='git branch -D'
 alias deleteremotebranch='git push local --delete'
 
+function oops {
+  git commit --amend
+}
 
 # interactive rebase for a specific count of commits
 # $1 : number of commits to pop off
@@ -150,4 +163,14 @@ function update-zsh {
 function new-upstream {
   git remote add upstream $1
   git remote set-url --push upstream DISABLED
+  rems
 }
+
+# clone a new repo and rename to local
+# $1 : remote url 
+# function new-local {
+#   cd ~/dev;
+#   git clone $1
+#   cd 
+#   `git remote rename origin local`;
+# }
