@@ -20,6 +20,8 @@ clear
 # ----------------------------------------------
 alias ed='code ~/.terminal-config/.zsh-config.sh'
 alias .='cd ../'
+alias l='ls'
+alias ll='ls -la'
 alias o='open .'
 alias c='clear'
 alias own='sudo chown -R $(whoami)'
@@ -85,12 +87,20 @@ function register-device {
   bundle exec fastlane match development --readonly
 }
 
+function gpsup {
+    git_current_branch=$(git symbolic-ref --short HEAD)
+    git push --set-upstream origin $git_current_branch
+}
+
+# networking
+alias ports='netstat -ao'
+
 # clone a new repo and rename to local
-# $1 : remote url 
+# $1 : remote url
 # function new-local {
 #   cd ~/dev;
 #   git clone $1
-#   cd 
+#   cd
 #   `git remote rename origin local`;
 # }
 
@@ -114,12 +124,11 @@ machineName="$(hostname)"
 case "$machineName" in
   LM-C02W83C8HTD6*) currentMachine="Work Macbook";;
   KERRIDGE-PC*)     currentMachine="Home PC";;
-  *)                currentMachine="Unrecognized Device"
+  XLW-5CD0036MR8*)  currentMachine="Work PC";;
+  *)                currentMachine="Unrecognized Device - ${machineName}"
 esac
 
 echo "Read in config for your $currentMachine"
-printf "\e[93m" && figlet -f standard "yo my dude"
-echo "\n"
 
 # ----------------------------------------------------------------------------------------------------
 # ------------------------------------------- DEVICE SPECIFIC ----------------------------------------
@@ -128,8 +137,11 @@ echo "\n"
 # ---------------------------------------------
 # ----------------- WORK MAC ------------------
 # ---------------------------------------------
-if [ $currentMachine = 'Work Macbook' ]
+if [[ $currentMachine = "Work Macbook" ]]
 then
+  printf "\e[93m" && figlet -f standard "yo my dude"
+  echo "\n"
+
   alias dev='cd ~/dev'
   alias dl='cd ~/Downloads'
   alias xdev='cd ~/dev/Xero'
@@ -148,6 +160,40 @@ then
   }
 fi
 
+# ---------------------------------------------
+# ----------------- WORK PC -------------------
+# ---------------------------------------------
+if [[ $currentMachine = "Work PC" ]]
+then
+  alias ref='source ~/.bashrc'
+  alias edconfig='code ~/.bashrc'
+
+  # execute command using work aws profile
+  # @ : command to be run
+  function aws-work {
+      aws-vault exec work -- bash -c "'$@'"
+  }
+
+  default_namespace='bank-feeds'
+  namespace=$default_namespace
+
+  # kubernetes/k8s shorthand command
+  # -n : namespace override if not using default
+  # @  : command to be run
+  function k {
+      local OPTIND flag n
+      while getopts 'n:' flag; do
+          case "${flag}" in
+            n)
+              namespace="${OPTARG}"
+              ;;
+          esac
+      done
+      shift $((OPTIND-1))
+
+      aws-work kubectl -n $namespace $@
+  }
+fi
 
 # ----------------------------------------------------------------------------------------------------
 # --------------------------------------------- OS SPECIFIC ------------------------------------------
@@ -177,7 +223,7 @@ then
 elif [ $os = Windows ]
 then
   echo "Windows"
-  
+
   alias ref='source ~/.bashrc'
   alias edconfig='code ~/.bashrc'
 fi
