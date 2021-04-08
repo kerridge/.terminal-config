@@ -87,7 +87,7 @@ function gpsup {
 function disable-push {
   git remote set-url --push upstream DISABLED
 }
-
+ 
 # networking
 alias ports='netstat -ao'
 
