@@ -18,6 +18,8 @@ clear
 # ----------------------------------------------
 # ----------------- ESSENTIALS -----------------
 # ----------------------------------------------
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+
 alias ed='code ~/.terminal-config/.zsh-config.sh'
 alias .='cd ../'
 alias l='ls'
@@ -41,9 +43,31 @@ alias gra='git rebase --abort'
 alias grc='git rebase --continue'
 alias gc='git commit'
 alias gco='git checkout'
-alias gpl='git push local develop'
+alias gpl='git push local'
 alias deletelocalbranch='git branch -D'
 alias deleteremotebranch='git push local --delete'
+
+# ----------------------------------------------
+# ------------------ PYTHON --------------------
+# ----------------------------------------------
+alias penv='source env/bin/activate'
+alias freeze='pip freeze > requirements.txt'
+
+# ----------------------------------------------
+# ------------------ DOCKER --------------------
+# ----------------------------------------------
+alias dc='docker compose'
+alias delete-volumes='docker volume rm $(docker volume ls -q)'
+
+function dcr {
+  docker compose down -v
+  docker rm -f $(docker ps -a -q)
+  docker volume rm $(docker volume ls -q)
+}
+
+function dbash {
+  docker exec -it $1 /bin/bash
+}
 
 # pops and opens last commit for editing/squashing changes in
 function oops {
@@ -81,13 +105,13 @@ function new-upstream {
 
 function gpsup {
     git_current_branch=$(git symbolic-ref --short HEAD)
-    git push --set-upstream origin $git_current_branch
+    git push --set-upstream local $git_current_branch
 }
 
 function disable-push {
-  git remote set-url --push upstream DISABLED
+  git remote set-url --push $1 DISABLED
 }
- 
+
 # networking
 alias ports='netstat -ao'
 
@@ -115,8 +139,13 @@ then
   alias ref='source ~/.zshrc'
   alias edconfig='code ~/.zshrc'
 
+  alias ip='ipconfig getifaddr en0'
+
   alias ll='colorls -lA --sd'
   alias l='colorls -A --sd'
+
+  alias xcw='open *.xcworkspace'
+  alias xcp='open *.xcodeproj'
 
   export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#939393,bold,underline"
 
@@ -126,6 +155,24 @@ then
     for plugin in $plugins; do
         echo "\n\nPlugin: $plugin"; grep -r "^function \w*" $PLUGIN_PATH$plugin | awk '{print $2}' | sed 's/()//'| tr '\n' ', '; grep -r "^alias" $PLUGIN_PATH$plugin | awk '{print $2}' | sed 's/=.*//' |  tr '\n' ', '
     done
+  }
+
+
+  # $1: IP address of server
+  function add-public-ssh-to-server() {
+    # put new public key onto server
+    ssh-copy-id -i ~/.ssh/id_ed25519.pub root@$1
+  }
+
+  function new-ssh() {
+    # create new key pair
+    ssh-keygen -t ed25519 -C "sammykerridge@gmail.com"
+    # public key
+    pbcopy < ~/.ssh/id_ed25519.pub
+    # private key
+    pbcopy < ~/.ssh/id_ed25519
+    # connect with private
+    ssh -i ~/.ssh/id_ed25519 root@149.28.180.213
   }
 
   # ---------------------------------------
@@ -142,13 +189,24 @@ then
     function record {
       dev
       cd recordings
-      xcrun simctl io booted recordVideo $1.mp4
+      xcrun simctl io booted recordVideo $1.gif
     }
 
     # runs swiftlinter
     function swiftlint {
         xdev
         './Pods/SwiftLint/swiftlint'
+    }
+
+    # get latest upstream and update pods
+    function xup {
+      cd ~/dev/Xero
+      git checkout develop
+      git fetch upstream
+      git rebase upstream/develop
+
+      bundle install
+      bundle exec pod install --repo-update
     }
 
     # sends a pre-configured json push payload to simulator
@@ -160,6 +218,16 @@ then
     # registers test device to work with xCode
     function register-device {
       bundle exec fastlane match development --readonly
+    }
+
+    function fix-rbenv {
+      gem update --system 3.0.8 && gem update --system
+    }
+
+    # spins up a new VIPER module in your current directory using the gen.rb script
+    # $1 : name of the module
+    function new-viper-module {
+      ~/dev/SnakyMcSnakeFace/bin/gen.rb -n $1 -o ./$1
     }
   fi
 
