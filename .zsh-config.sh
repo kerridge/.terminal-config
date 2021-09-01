@@ -147,6 +147,8 @@ then
   alias xcw='open *.xcworkspace'
   alias xcp='open *.xcodeproj'
 
+  alias vc='vultr-cli'
+
   export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#939393,bold,underline"
 
   # shows available custom plugin commands
@@ -157,6 +159,9 @@ then
     done
   }
 
+  function trigger-build() {
+    git commit --ammend
+  }
 
   # $1: IP address of server
   function add-public-ssh-to-server() {
