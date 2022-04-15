@@ -11,6 +11,12 @@ source "$(dirname "$0")/.device-config.sh"
 # clears iTerm2 last login message
 clear
 
+function mc {
+  docker exec -i mc-server_$1_1 rcon-cli
+}
+
+# alias mc='docker exec -i mc-server_vanilla_1 rcon-cli'
+
 
 # ----------------------------------------------------------------------------------------------------
 # ------------------------------------------------ GLOBAL --------------------------------------------
@@ -232,6 +238,8 @@ then
     # spins up a new VIPER module in your current directory using the gen.rb script
     # $1 : name of the module
     function new-viper-module {
+      cd ~/dev/SnakyMcSnakeFace
+      git pull
       ~/dev/SnakyMcSnakeFace/bin/gen.rb -n $1 -o ./$1
     }
   fi
